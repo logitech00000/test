@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Problem Statement</title>
+    <style>
+        :root{--bg:#0f1724;--card:#0b1220;--accent:#60a5fa;--muted:#9aa4b2}
+        html,body{height:100%}
+        body{
+            margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial;
+            background:linear-gradient(180deg,#051023 0%, #071528 100%); color:#e6eef8;
+            display:flex; align-items:center; justify-content:center; padding:24px;
+        }
+        .card{
+            width:100%; max-width:720px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border:1px solid rgba(255,255,255,0.04); padding:32px; border-radius:12px; box-shadow:0 6px 30px rgba(2,6,23,0.6);
+            text-align:center;
+        }
+        h1{margin:0 0 12px; font-size:20px; font-weight:600; color:#f1f7ff}
+        p.lead{margin:0 0 20px; color:var(--muted); font-size:15px}
+        .timer{
+            display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap;
+        }
+        .time-seg{
+            background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            padding:12px 16px; border-radius:8px; border:1px solid rgba(255,255,255,0.03);
+            min-width:88px;
+        }
+        .time-seg .value{font-size:24px; font-weight:700; color:var(--accent); display:block}
+        .time-seg .label{font-size:12px; color:var(--muted); margin-top:6px}
+        .revealed{font-weight:700; color:#9be7a8; font-size:18px}
+        small.hint{display:block;margin-top:16px;color:var(--muted);font-size:13px}
+    </style>
+</head>
+<body>
+    <main class="card" role="main" aria-labelledby="main-heading">
+        <h1 id="main-heading">THE PROBLEM STATEMENT WILL BE REVEALED ONE WEEK BEFORE THE HACKATHON</h1>
+        
+
+        <div id="countdown" class="timer" aria-live="polite">
+            <div class="time-seg" aria-hidden="true">
+                <span class="value" id="days">0</span>
+                <span class="label">Days</span>
+            </div>
+            <div class="time-seg" aria-hidden="true">
+                <span class="value" id="hours">00</span>
+                <span class="label">Hours</span>
+            </div>
+            <div class="time-seg" aria-hidden="true">
+                <span class="value" id="minutes">00</span>
+                <span class="label">Minutes</span>
+            </div>
+            <div class="time-seg" aria-hidden="true">
+                <span class="value" id="seconds">00</span>
+                <span class="label">Seconds</span>
+            </div>
+        </div>
+
+        <div id="revealedMsg" class="revealed" style="display:none;" role="status">The problem statement has been revealed.</div>
+    </main>
+
+    <script>
+        // Set the hackathon start date/time here (ISO 8601). The page will reveal 7 days before this date.
+        // Example: const hackathonDate = new Date('2025-11-01T09:00:00Z');
+        const hackathonDate = new Date('2025-12-01T09:00:00Z');
+
+        const revealTime = new Date(hackathonDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+        const $days = document.getElementById('days');
+        const $hours = document.getElementById('hours');
+        const $minutes = document.getElementById('minutes');
+        const $seconds = document.getElementById('seconds');
+        const $countdown = document.getElementById('countdown');
+        const $revealedMsg = document.getElementById('revealedMsg');
+
+        function pad(n){ return String(n).padStart(2,'0'); }
+
+        function update() {
+            const now = new Date();
+            const diff = revealTime - now;
+
+            if (diff <= 0) {
+                // revealed
+                $countdown.style.display = 'none';
+                $revealedMsg.style.display = 'block';
+                clearInterval(timer);
+                return;
+            }
+
+            const totalSec = Math.floor(diff / 1000);
+            const days = Math.floor(totalSec / 86400);
+            const hours = Math.floor((totalSec % 86400) / 3600);
+            const minutes = Math.floor((totalSec % 3600) / 60);
+            const seconds = totalSec % 60;
+
+            $days.textContent = days;
+            $hours.textContent = pad(hours);
+            $minutes.textContent = pad(minutes);
+            $seconds.textContent = pad(seconds);
+        }
+
+        // First render
+        update();
+        // Update every second
+        const timer = setInterval(update, 1000);
+    </script>
+</body>
+</html>
