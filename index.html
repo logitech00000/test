@@ -1,73 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+</html>
 <script>
+/* Early mobile fixes: inject responsive meta + compact mobile-first CSS as soon as possible */
 (function(){
-    var css = `
-/* Mobile-first responsive tweaks */
-html,body{overflow-x:hidden;-webkit-text-size-adjust:100%;}
-.container{padding-left:16px;padding-right:16px;}
+    function applyMobileFixes(){
+        try{
+            // add viewport meta if missing
+            if(!document.querySelector('meta[name="viewport"]')){
+                var m = document.createElement('meta');
+                m.name = 'viewport';
+                m.content = 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover';
+                if(document.head) document.head.appendChild(m);
+            }
 
-/* Navigation */
-.navbar{min-height:64px;padding:8px 0;}
-.navbar-brand img{height:40px;}
-.navbar-brand span{font-size:1.4rem;letter-spacing:1px;}
-.navbar-nav{gap:12px;}
-.navbar-nav .nav-link{font-size:1rem;padding:.4rem .6rem;}
-.navbar-toggler{border-radius:8px;padding:.2rem .5rem;}
-.navbar-collapse{background:transparent;}
+            // mobile-first CSS overrides
+            var css = `
+/* Reset and container */
+html,body{margin:0;padding:0;overflow-x:hidden;-webkit-text-size-adjust:100%;}
+.container{padding-left:14px;padding-right:14px;max-width:100%;box-sizing:border-box;}
 
-/* Hero & banner */
-section[style*="padding: 120px 0 80px 0"]{padding:64px 0 32px 0;}
-.banner-one__inner{padding:8px;}
-.banner-one__countdown-timer-box{margin:12px auto;text-align:center;}
+/* Navbar */
+.navbar{min-height:56px;padding:8px 0;}
+.navbar-brand img{height:36px;}
+.navbar-brand span{font-size:1.25rem;line-height:1;}
+.navbar-nav{gap:10px;}
+.navbar-nav .nav-link{font-size:0.95rem;padding:.35rem .5rem;}
+.navbar-toggler{padding:.2rem .5rem;}
 
-/* Images & embeds */
-img, iframe, .team-one__img img, .site-footer__shape-1 img{max-width:100%;height:auto;display:block;}
+/* Hero / glass panel */
+section[style*="padding: 120px 0 80px 0"]{padding:48px 0 28px 0;}
+.container > div[style*="display: inline-block; background: rgba(52, 248, 251"]{
+        padding:20px; border-radius:18px; margin:0 auto 16px; display:block; width:100%;
+}
+.banner-one__inner img{max-width:120px;height:auto;margin:0 auto 10px;}
 
-/* Layout stacking for small screens */
+/* Typography */
+h1{font-size:1.8rem;}
+.section-title__title{font-size:1.4rem;}
+.section-title__tagline{font-size:0.85rem;}
+.feature-one__title{font-size:1rem;}
+
+/* Buttons / CTAs */
+.thm-btn{font-size:1rem;padding:10px 18px;border-radius:12px;}
+a.thm-btn[style*="position: fixed"]{right:12px;bottom:12px;padding:10px 14px;}
+
+/* Layout stacking */
 .schedule-three__routine-details,
 .feature-one .row,
 .team-one .row,
-#sponsor-highlight .row{flex-direction:column !important;}
-.schedule-three__time-info-box{min-width:140px;padding:10px 14px;}
-.schedule-three__routine-time-detail{margin-top:12px;max-width:100%;}
+#sponsor-highlight .row{flex-direction:column !important;align-items:stretch;}
+.team-one.team-three .team-one__single{max-width:100%;}
+
+/* Schedule boxes */
+.schedule-three__top .schedule-three__time-box{gap:12px;flex-wrap:wrap;}
+.schedule-three__top .schedule-three__time-info-box{min-width:100%;max-width:420px;}
 
 /* Footer contact stacking */
 .footer-widget__contact-inner .row{flex-direction:column;align-items:center;}
 .footer-widget__contact-inner .row > div{width:100%;max-width:540px;padding:8px 0;}
 
-/* Floating CTA */
-a.thm-btn[style*="position: fixed"]{right:16px;bottom:16px;padding:10px 16px;border-radius:40px;font-size:0.98rem;box-shadow:0 6px 18px rgba(0,153,255,0.18);}
+/* Maps / iframes */
+iframe{width:100%;height:240px;}
 
-/* Smaller type on narrow screens */
-.section-title__title{font-size:1.6rem;}
-.section-title__tagline{font-size:0.85rem;}
-h1{font-size:2rem;}
-.feature-one__title{font-size:1.05rem;}
-
-/* Make hero glass panel full width with padding on mobile */
-.container > div[style*="display: inline-block; background: rgba(52, 248, 251"]{
-    display:block; width:100%; box-sizing:border-box; padding:28px; margin:0 auto 20px; border-radius:20px;
-}
-
-/* Improve touch targets */
-a, button { -webkit-tap-highlight-color: rgba(0,0,0,0.12); }
-
-/* Media queries for very small devices */
-@media (max-width: 480px){
-    .navbar-brand span{font-size:1.1rem;}
+/* Hide heavy particle background on very small devices to improve performance */
+@media (max-width:480px){
+    #particles-js{display:none!important;}
+    .navbar-brand span{font-size:1.05rem;}
     .site-footer__logo span{font-size:1.25rem;}
-    .team-one.team-three .team-one__single{max-width:100%;}
-    .schedule-three__top .schedule-three__time-box{gap:10px;flex-wrap:wrap;}
     .marquee, marquee{font-size:1rem;}
 }
 `;
-    var s = document.createElement('style');
-    s.type = 'text/css';
-    s.appendChild(document.createTextNode(css));
-    // inject as soon as head exists
-    if(document.head) document.head.appendChild(s);
-    else document.addEventListener('DOMContentLoaded', function(){ document.head.appendChild(s); });
+            var s = document.createElement('style');
+            s.type = 'text/css';
+            s.appendChild(document.createTextNode(css));
+            if(document.head) document.head.appendChild(s);
+            else document.addEventListener('DOMContentLoaded', function(){ document.head.appendChild(s); });
+        }catch(e){
+            console && console.warn && console.warn('Mobile fixes failed', e);
+        }
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyMobileFixes);
+    else applyMobileFixes();
 })();
 </script>
 <head>
@@ -155,7 +170,7 @@ a, button { -webkit-tap-highlight-color: rgba(0,0,0,0.12); }
                 PROTOTHON 2K25
             </h1>
             <p style="font-size: 1.25rem; color: #ffffff; font-weight: 600; margin-bottom: 0;"></p>
-                December 12-13, 2025 | Hindustan Institute of Technology and Science, Padur
+                December 5-6, 2025 | Hindustan Institute of Technology and Science, Padur
             </p>
         </div>
         <div class="container">
@@ -353,17 +368,19 @@ h1, h2, h3, h4, h5, h6 {
         <div class="preloader__image"></div>
     </div>
     <!-- /.preloader -->
-    <!-- Title sponsor (reduced size) -->
-    <div class="col-lg-4 col-md-8">
-        <div style="max-width:420px; margin:0 auto; background: linear-gradient(135deg,#ffffff 60%,#ffffff 100%); border-radius:12px; box-shadow:0 3px 12px #f7971e33; border:1px solid #333399; padding:18px 16px; text-align:center; position:relative;">
-            <div style="position:absolute; top:-18px; left:50%; transform:translateX(-50%);">
-                <span style="background:#0099ff; color:#fefefe; font-weight:700; font-size:0.95rem; padding:6px 16px; border-radius:10px; box-shadow:0 2px 6px #f7971e33;">TITLE SPONSOR</span>
-            </div>
-            <div style="display:flex; flex-direction:column; align-items:center; gap:8px; margin:28px 0 12px;">
-                <a href="https://www.theiet.org" target="_blank" rel="noopener noreferrer">
-                    <img src="assets/images/sponsor/iet-logo.webp" alt="IET Logo" style="height:60px; object-fit:contain;">
-                </a>
-                
+ <!-- Event Partners --> 
+                <div class="col-lg-8 col-md-12 mx-auto text-center"></div>
+                    <div style="background: linear-gradient(135deg, #ffffff 60%, #ffffff 100%); border-radius: 10px; box-shadow: 0 2px 10px #0099ff44; border: 2px solid #0099ff; padding: 20px 10px; text-align: center; position: relative; margin: 0 auto; max-width: 600px;">
+                        <div style="position: absolute; top: -24px; left: 50%; transform: translateX(-50%);">
+                            <span style="background: #0099ff; color: #fff; font-weight: bold; font-size: 1.1rem; padding: 8px 24px; border-radius: 12px; box-shadow: 0 2px 8px #0099ff44;">TITLE SPONSOR</span>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin: 16px 0 6px 0;">
+                            <a href="https://www.zoho.com" target="_blank" rel="noopener noreferrer">
+                                <img src="assets/images/sponsor/zoho-logo.webp" alt="zoho Logo" style="height: 120px;">
+                            </a>
+                        </div>
+                    </div>
+                </div></div>
             </div>
         </div>
     </div></div>
@@ -388,8 +405,8 @@ h1, h2, h3, h4, h5, h6 {
                     </a>    
                    
                    
-                     <a href="https://www.zoho.com" target="_blank" rel="noopener noreferrer">
-                        <img src="assets/images/sponsor/zoho-logo.webp" alt="ZOHO LOGO" style="height: 80px;">
+                     <a href="https://www.theiet.org/" target="_blank" rel="noopener noreferrer">
+                        <img src="assets/images/sponsor/iet-logo.webp" alt="iet LOGO" style="height: 48px;">
                     </a>
                    
                     <a href="https://share.google/R3sovwqi3ymTbbrw9" target="_blank" rel="noopener noreferrer">
@@ -398,8 +415,18 @@ h1, h2, h3, h4, h5, h6 {
                      <a href="https://sites.google.com/view/smartbeamresonetics/home" target="_blank" rel="noopener noreferrer">
                         <img src="assets/images/sponsor/smartbeam-logo.png" alt="SmartBeam Logo" style="height: 60px;">
                     </a>
-                    
-                
+                     <a href="https://www.daloftaerospace.in/" target="_blank" rel="noopener noreferrer">
+                        <img src="assets/images/sponsor/daloft-logo.webp" alt="daloft-logo Logo" style="height: 60px;">
+                    </a>
+                       <a href="https://noobtron.com/" target="_blank" rel="noopener noreferrer">
+                        <img src="assets/images/sponsor/noobtron-logo.png" alt="noobtron-logo Logo" style="height: 60px;">
+                    </a>
+                    <a href="https://www.bluebinaries.com/" target="_blank" rel="noopener noreferrer">
+                        <img src="assets/images/sponsor/blue-logo.png" alt="blue-logo Logo" style="height: 60px;">
+                    </a>
+                     <a href="https://www.ii-ct.com/de" target="_blank" rel="noopener noreferrer">
+                        <img src="assets/images/sponsor/iict-logo.png" alt="iict-logo Logo" style="height: 60px;">
+                    </a>
                     </div>
                 </div>
                 </div>
